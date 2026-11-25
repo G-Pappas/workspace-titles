@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "gpappas.ws-title",
+  "name": "Workspace Titles",
+  "version": "1.0.0",
+  "author": "gpappas",
+  "description": "A renamable title popup under the clock every time you switch workspace, plus a bar button to list, switch and configure",
+  "kinds": [
+    "service",
+    "bar-widget"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "service": "Service.qml",
+    "barWidget": "Widget.qml"
+  },
+  "barWidget": {
+    "displayName": "Workspace Titles",
+    "description": "Titles of your workspaces: click to switch, rename or change how the popup behaves",
+    "category": "Compositor",
+    "allowMultiple": false,
+    "defaultSection": "centerEnd"
+  }
+}
