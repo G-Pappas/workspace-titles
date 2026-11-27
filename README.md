@@ -3,6 +3,7 @@
 Every workspace gets a title. Switch workspace and a small card appears under the bar clock with its number and title, a pencil to rename it and a cross to close it. It closes by itself after 10 seconds.
 
 - **Automatic titles**: a workspace without a custom title is named after its focused window ("Ghostty +1", "Google Chrome"), or by your default text when empty. It is never blank. Rename it and the name is yours; save an empty name to go back to automatic.
+- **Cleared when empty**: when the last window of a workspace closes (or moves away), its custom title is cleared, and so are titles of workspaces found empty at startup. The workspace then falls back to an automatic title the next time it has windows. Renaming a workspace that has no windows keeps its title until windows come and go.
 - **Rename**: click the title or the pencil, type, Enter to save, Esc to cancel. `SUPER + ALT + R` renames the current workspace without switching; right-click the bar button does the same.
 - **Bar button** (a tag icon, centerEnd by default): click for all ten workspaces (click a row to switch, pencil to rename) and the settings below.
 

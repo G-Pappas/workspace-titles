@@ -114,6 +114,52 @@ Item {
     }
   }
 
+  // A workspace with no windows left has nothing to be titled: when its last
+  // window closes (or at start, for workspaces emptied while the shell was off)
+  // its custom title is cleared. Checked against `hyprctl clients`, debounced
+  // on window changes. `occupied` is the set of workspaces that had windows at
+  // the previous check; null until the first one.
+  property var occupied: null
+
+  function sweep(text) {
+    var list
+    try { list = JSON.parse(text) } catch (e) { return }
+    if (!Array.isArray(list)) return
+    var now = ({})
+    for (var i = 0; i < list.length; i++) {
+      var c = list[i]
+      if (c.mapped !== false && c.workspace && c.workspace.id > 0) now[String(c.workspace.id)] = true
+    }
+    var next = ({}), changed = false
+    for (var k in titles) {
+      var gone = !now[k] && (occupied === null || occupied[k] === true)
+      if (gone) changed = true
+      else next[k] = titles[k]
+    }
+    occupied = now
+    if (changed) {
+      titles = next
+      titlesFile.setText(JSON.stringify(next, null, 2) + "\n")
+    }
+  }
+
+  Timer { id: sweepTimer; interval: 600; onTriggered: if (!clients.running) clients.running = true }
+
+  Connections {
+    target: Hyprland
+    function onRawEvent(event) {
+      var n = event.name
+      if (n === "openwindow" || n === "closewindow" || n === "movewindowv2" || n === "movewindow")
+        sweepTimer.restart()
+    }
+  }
+
+  Process {
+    id: clients
+    command: ["hyprctl", "clients", "-j"]
+    stdout: StdioCollector { waitForEnd: true; onStreamFinished: root.sweep(text) }
+  }
+
   // Offers (once, by notification) to hook SUPER + ALT + R into the Hyprland
   // config. Nothing changes unless accepted or `setup.sh apply` is run.
   Process {
@@ -122,6 +168,7 @@ Item {
   }
   Component.onCompleted: {
     setup.running = true
+    sweepTimer.start()
     Qt.callLater(function() { root.ready = true })
   }
 
